@@ -30,7 +30,7 @@ def extract_article(url: str) -> str:
 
 
 def summarize(text: str, sentences: int = 3) -> str:
-    parser = PlaintextParser.from_string(text, Tokenizer("korean"))
+    parser = PlaintextParser.from_string(text, Tokenizer("english"))
     summarizer = LsaSummarizer()
     result = summarizer(parser.document, sentences)
     return "\n\n".join(f"{i+1}. {s}" for i, s in enumerate(result))
