@@ -4,3 +4,5 @@ python-telegram-bot
 python-dotenv
 sumy
 nltk
+yake
+apscheduler
