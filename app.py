@@ -1,7 +1,9 @@
+import io
 import os
 import json
 import requests
 import streamlit as st
+from gtts import gTTS
 from datetime import datetime, timedelta
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -77,6 +79,13 @@ def summarize(text: str, n: int = 3) -> str:
 def extract_keywords(text: str, n: int = 5) -> list[str]:
     kw = yake.KeywordExtractor(lan="en", n=2, dedupLim=0.7, top=n)
     return [k for k, _ in kw.extract_keywords(text[:3000])]
+
+
+def tts_audio(text: str) -> bytes:
+    buf = io.BytesIO()
+    gTTS(text=text, lang="ko", slow=False).write_to_fp(buf)
+    buf.seek(0)
+    return buf.read()
 
 
 def build_message(url: str, summary: str, keywords: list, fmt: str) -> str:
@@ -196,6 +205,11 @@ with tab1:
         # 요약 결과
         st.subheader("📋 요약")
         st.info(summary)
+
+        if st.button("🔊 읽어주기", key=f"tts_{i}"):
+            with st.spinner("음성 생성 중..."):
+                audio = tts_audio(summary)
+            st.audio(audio, format="audio/mp3")
 
         # 텔레그램 메시지 미리보기
         with st.expander("📱 텔레그램 메시지 미리보기"):
